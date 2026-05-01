@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>QuantumCalc | Calculadora Profissional</title>
+
+<!-- Fonte premium -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* ========== RESET E BASE ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  background: #0a0c15;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========== FUNDO NEURAL ANIMADO 3D ========== */
+.background-3d {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: radial-gradient(ellipse at 30% 40%, #1a1a2e, #0a0a12);
+}
+
+/* Grade de partículas dinâmica */
+#canvas-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+/* Ondas de luz animadas */
+.wave-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.3));
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ========== CONTAINER PRINCIPAL - EFEITO VIDRO QUÂNTICO ========== */
+.app {
+  position: relative;
+  width: 400px;
+  padding: 28px 24px 32px 24px;
+  background: rgba(12, 18, 28, 0.65);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 48px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5),
+              0 0 0 0.5px rgba(0, 255, 255, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  animation: floatIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes floatIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========== RELÓGIO PREMIUM ========== */
+.clock-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.clock {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 26px;
+  font-weight: 500;
+  color: #00f2ff;
+  text-shadow: 0 0 10px #00f2ff, 0 0 20px rgba(0, 242, 255, 0.3);
+  letter-spacing: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px 20px;
+  border-radius: 60px;
+  border: 1px solid rgba(0, 242, 255, 0.3);
+  backdrop-filter: blur(4px);
+}
+
+/* ========== DISPLAY FUTURISTA ========== */
+.display-wrapper {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.display {
+  width: 100%;
+  height: 90px;
+  background: #050a12;
+  border: none;
+  border-radius: 28px;
+  padding: 0 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 38px;
+  font-weight: 500;
+  text-align: right;
+  color: #00f2ff;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(0, 242, 255, 0.3);
+  background: linear-gradient(135deg, #02060c, #07101e);
+}
+
+.display:focus {
+  outline: none;
+  box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.5),
+              0 0 0 2px #00f2ff;
+}
+
+/* Indicador de energia */
+.display-glow {
+  position: absolute;
+  bottom: -2px;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #00f2ff, #ff6a00, #00f2ff, transparent);
+  filter: blur(3px);
+  animation: scanline 2.5s linear infinite;
+}
+
+@keyframes scanline {
+  0% { opacity: 0.3; transform: translateX(-100%); }
+  50% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0.3; transform: translateX(100%); }
+}
+
+/* ========== GRADE DE BOTÕES 5x4 COM DESIGN PROFISSIONAL ========== */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Estilo base dos botões */
+button {
+  padding: 18px 0;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+  border-radius: 28px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+}
+
+/* Efeito de brilho ao passar o mouse */
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+/* Botões numéricos */
+.btn-num {
+  background: linear-gradient(145deg, #181e2a, #0f131c);
+  color: #eef4ff;
+  box-shadow: 0 5px 0 #06080f;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-num:hover {
+  background: linear-gradient(145deg, #2a3345, #1a1f2c);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #06080f;
+}
+
+.btn-num:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #06080f;
+}
+
+/* Botões de operação */
+.btn-op {
+  background: linear-gradient(145deg, #ff6a00, #e05a00);
+  color: white;
+  box-shadow: 0 5px 0 #a33c00;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.btn-op:hover {
+  background: linear-gradient(145deg, #ff8020, #ff6a00);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #a33c00;
+}
+
+.btn-op:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #a33c00;
+}
+
+/* Botão Limpar */
+.btn-clear {
+  background: linear-gradient(145deg, #dc2626, #b91c1c);
+  color: white;
+  box-shadow: 0 5px 0 #7f1a1a;
+}
+
+.btn-clear:hover {
+  background: linear-gradient(145deg, #ef4444, #dc2626);
+  transform: translateY(-2px);
+}
+
+/* Botão Igual - especial gradiente duplo */
+.btn-equal {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #00c6ff, #0072ff, #00c6ff);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  color: white;
+  font-weight: 700;
+  font-size: 24px;
+  box-shadow: 0 5px 0 #0052a3;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.btn-equal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #0052a3;
+}
+
+.btn-equal:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #0052a3;
+}
+
+/* Botão zero e ponto ocupam espaço correto */
+.btn-zero {
+  background: linear-gradient(145deg, #181e2a, #0f131c);
+  color: #eef4ff;
+  box-shadow: 0 5px 0 #06080f;
+}
+
+/* ========== ANIMAÇÃO DE FEEDBACK ========== */
+@keyframes buttonFlash {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.4); }
+  100% { filter: brightness(1); }
+}
+
+button:active {
+  animation: buttonFlash 0.1s ease;
+}
+
+/* Animação de erro no display */
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.error-shake {
+  animation: shakeError 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  color: #ff4444 !important;
+}
+
+/* ========== BOTÃO DE MODO ========== */
+.mode-indicator {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.mode-badge {
+  font-size: 11px;
+  background: rgba(0, 242, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #00f2ff;
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+@media (max-width: 450px) {
+  .app {
+    width: 92%;
+    padding: 20px 18px 26px 18px;
+  }
+  
+  button {
+    padding: 14px 0;
+    font-size: 18px;
+  }
+  
+  .display {
+    height: 75px;
+    font-size: 32px;
+  }
+  
+  .clock {
+    font-size: 20px;
+    padding: 6px 16px;
+  }
+}
+
+/* Tema escuro completo */
+::-webkit-scrollbar {
+  width: 0;
+}
+
+</style>
+</head>
+<body>
+
+<div class="background-3d"></div>
+<canvas id="canvas-bg"></canvas>
+<div class="wave-overlay"></div>
+
+<div class="app">
+  <div class="mode-indicator">
+    <div class="mode-badge">⟡ SCIENTIFIC MODE ⟡</div>
+  </div>
+  
+  <div class="clock-section">
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+  
+  <div class="display-wrapper">
+    <input type="text" id="display" class="display" readonly>
+    <div class="display-glow"></div>
+  </div>
+  
+  <div class="buttons">
+    <button class="btn-clear" onclick="calculator.clear()">AC</button>
+    <button class="btn-op" onclick="calculator.addOperator('%')">%</button>
+    <button class="btn-op" onclick="calculator.addOperator('/')">÷</button>
+    <button class="btn-op" onclick="calculator.addOperator('*')">×</button>
+    
+    <button class="btn-num" onclick="calculator.addNumber('7')">7</button>
+    <button class="btn-num" onclick="calculator.addNumber('8')">8</button>
+    <button class="btn-num" onclick="calculator.addNumber('9')">9</button>
+    <button class="btn-op" onclick="calculator.addOperator('-')">−</button>
+    
+    <button class="btn-num" onclick="calculator.addNumber('4')">4</button>
+    <button class="btn-num" onclick="calculator.addNumber('5')">5</button>
+    <button class="btn-num" onclick="calculator.addNumber('6')">6</button>
+    <button class="btn-op" onclick="calculator.addOperator('+')">+</button>
+    
+    <button class="btn-num" onclick="calculator.addNumber('1')">1</button>
+    <button class="btn-num" onclick="calculator.addNumber('2')">2</button>
+    <button class="btn-num" onclick="calculator.addNumber('3')">3</button>
+    <button class="btn-equal" onclick="calculator.calculate()">=</button>
+    
+    <button class="btn-zero" onclick="calculator.addNumber('0')">0</button>
+    <button class="btn-num" onclick="calculator.addDecimal()">.</button>
+  </div>
+</div>
+
+<script>
+// ========== CALCULADORA PROFISSIONAL COM HISTÓRICO E SEGURANÇA ==========
+class ProfessionalCalculator {
+  constructor(displayElement) {
+    this.display = displayElement;
+    this.currentInput = '';
+    this.lastResult = null;
+    this.waitingForOperand = false;
+    this.errorFlag = false;
+  }
+
+  addNumber(num) {
+    if (this.errorFlag) this.clear();
+    if (this.waitingForOperand) {
+      this.currentInput = '';
+      this.waitingForOperand = false;
+    }
+    
+    // Prevenir números muito longos
+    if (this.currentInput.replace(/[.-]/g, '').length > 15) return;
+    
+    this.currentInput += num;
+    this.updateDisplay();
+    this.addRippleEffect();
+  }
+
+  addDecimal() {
+    if (this.errorFlag) this.clear();
+    if (this.waitingForOperand) {
+      this.currentInput = '0';
+      this.waitingForOperand = false;
+    }
+    
+    // Verificar se já existe ponto no número atual
+    const parts = this.currentInput.split(/[\+\-\*\/%]/);
+    const lastPart = parts[parts.length - 1];
+    if (lastPart.includes('.')) return;
+    
+    if (this.currentInput === '' || this.isOperatorEnding()) {
+      this.currentInput += '0.';
+    } else {
+      this.currentInput += '.';
+    }
+    this.updateDisplay();
+    this.addRippleEffect();
+  }
+
+  addOperator(op) {
+    if (this.errorFlag) this.clear();
+    if (this.currentInput === '' && this.lastResult !== null) {
+      this.currentInput = this.lastResult.toString();
+    }
+    
+    if (this.currentInput === '') return;
+    
+    // Converter operadores visuais
+    const visualOp = op;
+    
+    // Substituir último operador se necessário
+    if (this.isOperatorEnding()) {
+      this.currentInput = this.currentInput.slice(0, -1) + visualOp;
+    } else {
+      this.currentInput += visualOp;
+    }
+    
+    this.waitingForOperand = false;
+    this.updateDisplay();
+    this.addRippleEffect();
+  }
+
+  isOperatorEnding() {
+    return /[\+\-\*\/%]$/.test(this.currentInput);
+  }
+
+  calculate() {
+    if (this.errorFlag) this.clear();
+    if (this.currentInput === '') return;
+    
+    // Prevenir cálculo com operador no final
+    if (this.isOperatorEnding()) {
+      this.currentInput = this.currentInput.slice(0, -1);
+    }
+    
+    let expression = this.currentInput
+      .replace(/÷/g, '/')
+      .replace(/×/g, '*')
+      .replace(/−/g, '-');
+    
+    try {
+      // Usar Function para eval seguro
+      let result = Function('"use strict"; return (' + expression + ')')();
+      
+      if (!isFinite(result)) {
+        this.showError('Indefinido');
+        return;
+      }
+      
+      // Arredondamento inteligente
+      result = Math.round(result * 100000000) / 100000000;
+      
+      // Formatar resultado
+      let resultStr = result.toString();
+      if (resultStr.length > 16) {
+        resultStr = result.toExponential(8);
+      }
+      
+      this.currentInput = resultStr;
+      this.lastResult = result;
+      this.waitingForOperand = true;
+      this.errorFlag = false;
+      this.updateDisplay();
+      this.addSuccessEffect();
+    } catch (e) {
+      this.showError('Erro');
+    }
+  }
+
+  showError(msg) {
+    this.currentInput = msg;
+    this.errorFlag = true;
+    this.updateDisplay();
+    this.addErrorEffect();
+    setTimeout(() => {
+      if (this.errorFlag) {
+        this.clear();
+      }
+    }, 1500);
+  }
+
+  clear() {
+    this.currentInput = '';
+    this.lastResult = null;
+    this.waitingForOperand = false;
+    this.errorFlag = false;
+    this.updateDisplay();
+    this.addRippleEffect();
+  }
+
+  updateDisplay() {
+    this.display.value = this.currentInput || '0';
+  }
+
+  addRippleEffect() {
+    this.display.style.transform = 'scale(0.99)';
+    setTimeout(() => {
+      this.display.style.transform = '';
+    }, 100);
+  }
+
+  addSuccessEffect() {
+    this.display.style.transition = 'text-shadow 0.1s';
+    this.display.style.textShadow = '0 0 15px #00f2ff';
+    setTimeout(() => {
+      this.display.style.textShadow = '';
+    }, 200);
+  }
+
+  addErrorEffect() {
+    this.display.classList.add('error-shake');
+    setTimeout(() => {
+      this.display.classList.remove('error-shake');
+    }, 500);
+  }
+}
+
+// Inicializar calculadora
+const displayInput = document.getElementById('display');
+const calculator = new ProfessionalCalculator(displayInput);
+
+// ========== RELÓGIO DE ALTA PRECISÃO ==========
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+  const clockElement = document.getElementById('clock');
+  clockElement.textContent = `${h}:${m}:${s}`;
+  
+  // Efeito de pulsação suave
+  clockElement.style.transform = 'scale(1.02)';
+  setTimeout(() => {
+    clockElement.style.transform = 'scale(1)';
+  }, 200);
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+// ========== BACKGROUND ANIMADO COM CANVAS (PARTÍCULAS NEURAIS) ==========
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+
+let particles = [];
+let mouseX = null;
+let mouseY = null;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initParticles() {
+  const particleCount = 80;
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 2 + 1,
+      speedX: (Math.random() - 0.5) * 0.5,
+      speedY: (Math.random() - 0.5) * 0.3,
+      opacity: Math.random() * 0.4 + 0.2,
+      color: `hsl(${Math.random() * 60 + 20}, 100%, 55%)`
+    });
+  }
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#ff6a00';
+    ctx.fill();
+    
+    // Movimento
+    p.x += p.speedX;
+    p.y += p.speedY;
+    
+    // Rebote nas bordas
+    if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+    
+    // Conexões entre partículas próximas
+    for (let j = i + 1; j < particles.length; j++) {
+      const p2 = particles[j];
+      const dx = p.x - p2.x;
+      const dy = p.y - p2.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance < 100) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255, 106, 0, ${0.15 * (1 - distance / 100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    }
+  }
+  
+  requestAnimationFrame(drawParticles);
+}
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  particles = [];
+  initParticles();
+});
+
+resizeCanvas();
+initParticles();
+drawParticles();
+
+// ========== SUPORTE A TECLADO ==========
+document.addEventListener('keydown', (e) => {
+  const key = e.key;
+  
+  if (/[0-9]/.test(key)) {
+    calculator.addNumber(key);
+    e.preventDefault();
+  } else if (key === '.') {
+    calculator.addDecimal();
+    e.preventDefault();
+  } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+    let op = key;
+    if (key === '*') op = '*';
+    if (key === '/') op = '/';
+    calculator.addOperator(op);
+    e.preventDefault();
+  } else if (key === '%') {
+    calculator.addOperator('%');
+    e.preventDefault();
+  } else if (key === 'Enter' || key === '=') {
+    calculator.calculate();
+    e.preventDefault();
+  } else if (key === 'Escape' || key === 'c' || key === 'C') {
+    calculator.clear();
+    e.preventDefault();
+  } else if (key === 'Backspace') {
+    if (calculator.currentInput.length > 0) {
+      calculator.currentInput = calculator.currentInput.slice(0, -1);
+      calculator.updateDisplay();
+    }
+    e.preventDefault();
+  }
+});
+
+// ========== EFEITO DE ONDA NOS BOTÕES ==========
+document.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.style.position = 'absolute';
+    ripple.style.borderRadius = '50%';
+    ripple.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+    ripple.style.width = '40px';
+    ripple.style.height = '40px';
+    ripple.style.left = `${e.clientX - rect.left - 20}px`;
+    ripple.style.top = `${e.clientY - rect.top - 20}px`;
+    ripple.style.pointerEvents = 'none';
+    ripple.style.animation = 'rippleAnim 0.5s ease-out';
+    this.style.position = 'relative';
+    this.style.overflow = 'hidden';
+    this.appendChild(ripple);
+    
+    setTimeout(() => ripple.remove(), 500);
+  });
+});
+
+// Adicionar estilo para ripple
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes rippleAnim {
+    0% { transform: scale(0); opacity: 0.6; }
+    100% { transform: scale(4); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+
+// Console greeting
+console.log('%c⚡ QuantumCalc v3.0 | Modo Profissional Ativado ⚡', 'color: #00f2ff; font-size: 14px; font-weight: bold;');
+</script>
+</body>
+</html>
